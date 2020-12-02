@@ -219,11 +219,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         mDanmakuView = (IDanmakuView) findViewById(R.id.sv_danmaku);
         mContext = DanmakuContext.create();
-        mContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3).setDuplicateMergingEnabled(false).setScrollSpeedFactor(1.2f).setScaleTextSize(1.2f)
-        .setCacheStuffer(new SpannedCacheStuffer(), mCacheStufferAdapter) // 图文混排使用SpannedCacheStuffer
-//        .setCacheStuffer(new BackgroundCacheStuffer())  // 绘制背景使用BackgroundCacheStuffer
-        .setMaximumLines(maxLinesPair)
-        .preventOverlapping(overlappingEnablePair).setDanmakuMargin(40);
+        mContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3)
+                .setDuplicateMergingEnabled(false)
+                .setScrollSpeedFactor(1.2f)
+                .setScaleTextSize(1.2f)
+                .setCacheStuffer(new SpannedCacheStuffer(), mCacheStufferAdapter) // 图文混排使用SpannedCacheStuffer
+//              .setCacheStuffer(new BackgroundCacheStuffer())  // 绘制背景使用BackgroundCacheStuffer
+                .setMaximumLines(maxLinesPair)
+                .preventOverlapping(overlappingEnablePair)
+                .setDanmakuMargin(40);
         if (mDanmakuView != null) {
             mParser = createParser(this.getResources().openRawResource(R.raw.comments));
             mDanmakuView.setCallback(new master.flame.danmaku.controller.DrawHandler.Callback() {
@@ -275,15 +279,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mDanmakuView.enableDanmakuDrawingCache(true);
         }
 
-        if (mVideoView != null) {
-            mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mediaPlayer) {
-                    mediaPlayer.start();
-                }
-            });
-            mVideoView.setVideoPath(Environment.getExternalStorageDirectory() + "/1.flv");
-        }
+//        if (mVideoView != null) {
+//            mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//                @Override
+//                public void onPrepared(MediaPlayer mediaPlayer) {
+//                    mediaPlayer.start();
+//                }
+//            });
+//            mVideoView.setVideoPath(Environment.getExternalStorageDirectory() + "/1.flv");
+//        }
 
     }
 
