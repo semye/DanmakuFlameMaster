@@ -46,14 +46,13 @@ public class DrawHandler extends Handler {
     private FrameCallback mFrameCallback;
 
     public interface Callback {
-        public void prepared();
+        void prepared();
 
-        public void updateTimer(DanmakuTimer timer);
+        void updateTimer(DanmakuTimer timer);
 
-        public void danmakuShown(BaseDanmaku danmaku);
+        void danmakuShown(BaseDanmaku danmaku);
 
-        public void drawingFinished();
-
+        void drawingFinished();
     }
 
     public static final int START = 1;
@@ -106,7 +105,7 @@ public class DrawHandler extends Handler {
 
     private boolean mDanmakusVisible = true;
 
-    private AbsDisplayer mDisp;
+    private AbsDisplayer<Canvas, ?> mDisp;
 
     private final RenderingState mRenderingState = new RenderingState();
 
@@ -298,7 +297,7 @@ public class DrawHandler extends Handler {
                 if (mDanmakuView != null) {
                     mDanmakuView.clear();
                 }
-                if(this.drawTask != null) {
+                if (this.drawTask != null) {
                     this.drawTask.requestClear();
                     this.drawTask.requestHide();
                 }
@@ -331,8 +330,8 @@ public class DrawHandler extends Handler {
                         Choreographer.getInstance().removeFrameCallback(mFrameCallback);
                     }
                 }
-                if (what == QUIT){
-                    if (this.drawTask != null){
+                if (what == QUIT) {
+                    if (this.drawTask != null) {
                         this.drawTask.quit();
                     }
                     if (mParser != null) {
@@ -465,7 +464,9 @@ public class DrawHandler extends Handler {
         public void doFrame(long frameTimeNanos) {
             sendEmptyMessage(UPDATE);
         }
-    };
+    }
+
+    ;
 
     @TargetApi(16)
     private void updateInChoreographer() {
@@ -538,7 +539,7 @@ public class DrawHandler extends Handler {
             if (mCallback != null) {
                 mCallback.updateTimer(timer);
             }
-//            Log.e("DrawHandler", time+"|d:" + d  + "RemaingTime:" + mRemainingTime + ",gapTime:" + gapTime + ",rtim:" + mRenderingState.consumingTime + ",average:" + averageTime);
+            //            Log.e("DrawHandler", time+"|d:" + d  + "RemaingTime:" + mRemainingTime + ",gapTime:" + gapTime + ",rtim:" + mRenderingState.consumingTime + ",average:" + averageTime);
         }
 
         mInSyncAction = false;
@@ -557,8 +558,8 @@ public class DrawHandler extends Handler {
         mCordonTime2 = (long) (mCordonTime * 2.5f);
         mFrameUpdateRate = Math.max(16, averageFrameConsumingTime / 15 * 15);
         mThresholdTime = mFrameUpdateRate + 3;
-//        Log.i("DrawHandler", "initRenderingConfigs test-fps:" + averageFrameConsumingTime + "ms,mCordonTime:"
-//                + mCordonTime + ",mFrameRefreshingRate:" + mFrameUpdateRate);
+        //        Log.i("DrawHandler", "initRenderingConfigs test-fps:" + averageFrameConsumingTime + "ms,mCordonTime:"
+        //                + mCordonTime + ",mFrameRefreshingRate:" + mFrameUpdateRate);
     }
 
     private void prepare(final Runnable runnable) {
@@ -618,6 +619,18 @@ public class DrawHandler extends Handler {
                                      int width, int height,
                                      boolean isHardwareAccelerated,
                                      IDrawTask.TaskListener taskListener) {
+        initDisplayer(context, width, height, isHardwareAccelerated);
+        IDrawTask task = useDrwaingCache ?
+                new CacheManagingDrawTask(timer, mContext, taskListener)
+                : new DrawTask(timer, mContext, taskListener);
+        task.setParser(mParser);
+        task.prepare();
+        obtainMessage(NOTIFY_DISP_SIZE_CHANGED, false)
+                .sendToTarget();
+        return task;
+    }
+
+    private void initDisplayer(Context context, int width, int height, boolean isHardwareAccelerated) {
         mDisp = mContext.getDisplayer();
         mDisp.setSize(width, height);
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
@@ -625,13 +638,6 @@ public class DrawHandler extends Handler {
                 displayMetrics.scaledDensity);
         mDisp.resetSlopPixel(mContext.scaleTextSize);
         mDisp.setHardwareAccelerated(isHardwareAccelerated);
-        IDrawTask task = useDrwaingCache ?
-                new CacheManagingDrawTask(timer, mContext, taskListener)
-                : new DrawTask(timer, mContext, taskListener);
-        task.setParser(mParser);
-        task.prepare();
-        obtainMessage(NOTIFY_DISP_SIZE_CHANGED, false).sendToTarget();
-        return task;
     }
 
     public void seekTo(Long ms) {
@@ -761,7 +767,7 @@ public class DrawHandler extends Handler {
         if (!mInWaitingState) {
             return;
         }
-        if(drawTask != null) {
+        if (drawTask != null) {
             drawTask.requestClear();
         }
         if (mUpdateInSeparateThread) {
@@ -815,7 +821,7 @@ public class DrawHandler extends Handler {
 
     private synchronized long getAverageRenderingTime() {
         int frames = mDrawTimes.size();
-        if(frames <= 0)
+        if (frames <= 0)
             return 0;
         Long first = mDrawTimes.peekFirst();
         Long last = mDrawTimes.peekLast();
@@ -836,7 +842,7 @@ public class DrawHandler extends Handler {
         }
     }
 
-    public IDisplayer getDisplayer(){
+    public IDisplayer getDisplayer() {
         return mDisp;
     }
 
