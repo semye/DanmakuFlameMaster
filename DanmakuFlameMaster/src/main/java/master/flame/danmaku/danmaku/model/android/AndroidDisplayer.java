@@ -42,11 +42,11 @@ public class AndroidDisplayer extends AbsDisplayer<Canvas, Typeface> {
 
         public final TextPaint PAINT, PAINT_DUPLICATE;
 
-        private Paint ALPHA_PAINT;
+        private final Paint ALPHA_PAINT;
 
-        private Paint UNDERLINE_PAINT;
+        private final Paint UNDERLINE_PAINT;
 
-        private Paint BORDER_PAINT;
+        private final Paint BORDER_PAINT;
 
         /**
          * 下划线高度
@@ -259,9 +259,9 @@ public class AndroidDisplayer extends AbsDisplayer<Canvas, Typeface> {
         }
     }
 
-    private Camera camera = new Camera();
+    private final Camera camera = new Camera();
 
-    private Matrix matrix = new Matrix();
+    private final Matrix matrix = new Matrix();
 
     private final DisplayerConfig mDisplayConfig = new DisplayerConfig();
 
@@ -272,7 +272,7 @@ public class AndroidDisplayer extends AbsDisplayer<Canvas, Typeface> {
     }
 
     @SuppressLint("NewApi")
-    private static final int getMaximumBitmapWidth(Canvas c) {
+    private static int getMaximumBitmapWidth(Canvas c) {
         if (Build.VERSION.SDK_INT >= 14) {
             return c.getMaximumBitmapWidth();
         } else {
@@ -281,7 +281,7 @@ public class AndroidDisplayer extends AbsDisplayer<Canvas, Typeface> {
     }
 
     @SuppressLint("NewApi")
-    private static final int getMaximumBitmapHeight(Canvas c) {
+    private static int getMaximumBitmapHeight(Canvas c) {
         if (Build.VERSION.SDK_INT >= 14) {
             return c.getMaximumBitmapHeight();
         } else {
@@ -477,14 +477,14 @@ public class AndroidDisplayer extends AbsDisplayer<Canvas, Typeface> {
 
     private int saveCanvas(BaseDanmaku danmaku, Canvas canvas, float left, float top) {
         camera.save();
-        if (locationZ !=0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+        if (locationZ != 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
             camera.setLocation(0, 0, locationZ);
         }
         camera.rotateY(-danmaku.rotationY);
         camera.rotateZ(-danmaku.rotationZ);
         camera.getMatrix(matrix);
         matrix.preTranslate(-left, -top);
-        matrix.postTranslate(left , top);
+        matrix.postTranslate(left, top);
         camera.restore();
         int count = canvas.save();
         canvas.concat(matrix);
